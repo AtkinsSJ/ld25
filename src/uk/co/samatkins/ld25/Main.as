@@ -19,7 +19,7 @@ package uk.co.samatkins.ld25
 			FP.screen.color = 0xffffff;
 			trace("RUNNING!");
 			
-			FP.world = new GameWorld;
+			FP.world = new MenuWorld;
 			FP.volume = 0.5;
 			
 			//FP.console.enable();
