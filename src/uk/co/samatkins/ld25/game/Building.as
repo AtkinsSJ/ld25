@@ -82,6 +82,7 @@ package uk.co.samatkins.ld25.game
 				case "butcher":
 					workDone = function():void {
 						workers.forEach(function(g:Goblin, i:int, vector:*):void {
+							g.visible = true;
 							g.changeState("gotogoat");
 							game.goats--;
 							game.emitter.emit("food", x + halfWidth - 8, y + halfHeight);

@@ -118,6 +118,7 @@ package uk.co.samatkins.ld25.game
 			// Clicking?
 			if (Input.mousePressed) {
 				if (thingToBuild != null) {
+				
 					build(thingToBuild,
 						Math.floor((Input.mouseX + world.camera.x) / GameWorld.TILE_SIZE),
 						Math.floor((Input.mouseY + world.camera.y) / GameWorld.TILE_SIZE));
@@ -163,6 +164,8 @@ package uk.co.samatkins.ld25.game
 				return false;
 				// TODO: Message "Not enough stone"
 			}
+					
+			game.playSound("build");
 			
 			game.stone -= Building.TYPES[type].stone;
 			FP.world.add(new Building(x, y, type));

@@ -35,6 +35,8 @@ package uk.co.samatkins.ld25.game
 			 * butchergoat - stay in butcher's for a while, and produce food
 		 */
 		
+		public var game:GameWorld;
+		
 		public var workplace:Building = null;
 		public var home:Building = null;
 		public var campfire:Building = null;
@@ -53,8 +55,10 @@ package uk.co.samatkins.ld25.game
 			
 			spritemap.add("hidden", [1]);
 			spritemap.add("idle", [0]);
+			spritemap.add("eat", [2, 3], 10);
 			spritemap.add("mine", [4, 5], 10);
 			spritemap.add("walk", [8, 9], 10);
+			spritemap.add("goatwalk", [10, 11], 10);
 			spritemap.add("sleep", [12, 13, 14, 15, 1, 1, 1], 10);
 			
 			type = "unit";
@@ -64,9 +68,10 @@ package uk.co.samatkins.ld25.game
 		{
 			super.added();
 			
-			(world as GameWorld).population++;
+			game = (world as GameWorld);
+			game.population++;
 			
-			campfire = (world as GameWorld).getInstance("campfire");
+			campfire = game.getInstance("campfire");
 		}
 		
 		override public function update():void 
@@ -123,10 +128,12 @@ package uk.co.samatkins.ld25.game
 					break;
 					
 				case "eat":
+					if (game.food == 0) { return; }
 					hunger += 8;
+					// If no food, start dieing
 					if (hunger >= 1000) {
 						changeState("gotowork");
-						(world as GameWorld).food -= 1;
+						game.food -= 1;
 					}
 					break;
 					
@@ -206,6 +213,11 @@ package uk.co.samatkins.ld25.game
 					
 				case "gotowork":
 					
+					if (workplace == null) {
+						changeState("idle");
+						return;
+					}
+					
 					v = new Point;
 					FP.angleXY(v, FP.angle(x, y, workplace.centerX, workplace.centerY));
 					spritemap.flipped = (v.x > 0);
@@ -217,6 +229,14 @@ package uk.co.samatkins.ld25.game
 					switch (workplace.buildingType) {
 						case "pit":
 							spritemap.play("mine");
+							var r:Number = Math.random();
+							if (r < 0.3) {
+								game.playSound("mine1");
+							} else if (r < 0.6) {
+								game.playSound("mine2");
+							} else {
+								game.playSound("mine3");
+							}
 							break;
 						case "butcher":
 							changeState("gotogoat");
@@ -236,7 +256,15 @@ package uk.co.samatkins.ld25.game
 					break;
 					
 				case "eat":
-					spritemap.play("idle");
+					spritemap.play("eat");
+					var r:Number = Math.random();
+					if (r < 0.3) {
+						game.playSound("eat1");
+					} else if (r < 0.6) {
+						game.playSound("eat2");
+					} else {
+						game.playSound("eat3");
+					}
 					break;
 					
 				case "gotosleep":
@@ -252,6 +280,7 @@ package uk.co.samatkins.ld25.game
 					moveTo(home.centerX, home.centerY);
 					spritemap.play("sleep");
 					spritemap.flipped = false;
+					game.playSound("sleep");
 					break;
 				
 				case "gotogoat":
@@ -267,13 +296,17 @@ package uk.co.samatkins.ld25.game
 					break;
 				
 				case "carrygoat":
+					spritemap.play("goatwalk");
 					v = new Point;
 					FP.angleXY(v, FP.angle(x, y, workplace.centerX, workplace.centerY));
 					spritemap.flipped = (v.x > 0);
+					game.playSound("goatgrab");
 					break;
 				
 				case "butchergoat":
+					game.playSound("goatdeath");
 					moveTo(workplace.centerX, workplace.centerY);
+					visible = false;
 					spritemap.play("idle");
 					break;
 					

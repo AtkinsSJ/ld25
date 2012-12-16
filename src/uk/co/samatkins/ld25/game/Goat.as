@@ -21,6 +21,7 @@ package uk.co.samatkins.ld25.game
 		
 		public var home:Building;
 		public var spritemap:Spritemap;
+		public var game:GameWorld;
 		
 		public var state:String = "eat";
 		public var alarm:Alarm;
@@ -54,7 +55,8 @@ package uk.co.samatkins.ld25.game
 		{
 			super.added();
 			
-			(world as GameWorld).goats++;
+			game = (world as GameWorld);
+			game.goats++;
 		}
 		
 		override public function update():void 
@@ -63,7 +65,7 @@ package uk.co.samatkins.ld25.game
 			
 			if (state == "walk") {
 				// walk somewhere
-				moveBy(moveVector.x, moveVector.y); // TODO: Stop goats escaping!
+				moveBy(moveVector.x, moveVector.y);
 				clampHorizontal(home.left, home.right, 8);
 				clampVertical(home.top, home.bottom, 8);
 			}
@@ -82,6 +84,15 @@ package uk.co.samatkins.ld25.game
 			} else {
 				state = "sleep";
 				spritemap.play("sleep");
+			}
+			
+			var r:Number = Math.random();
+			if (r < 0.1) {
+				game.playSound("goat1");
+			} else if (r < 0.2) {
+				game.playSound("goat2");
+			} else if (r < 0.3) {
+				game.playSound("goat3");
 			}
 			
 			alarm.start();

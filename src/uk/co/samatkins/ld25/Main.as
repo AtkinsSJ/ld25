@@ -20,6 +20,7 @@ package uk.co.samatkins.ld25
 			trace("RUNNING!");
 			
 			FP.world = new GameWorld;
+			FP.volume = 0.5;
 			
 			//FP.console.enable();
 			FP.console.toggleKey = Key.F1;
